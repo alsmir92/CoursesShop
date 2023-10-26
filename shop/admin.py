@@ -1,6 +1,28 @@
 from django.contrib import admin
-from . import models
+from .models import Course, Category
 
+admin.site.site_header = "Courses Admin"
+admin.site.site_title = "My Course"
+admin.site.index_title = "Welcome to the Courses admin area"
 
-admin.site.register(models.Category)
-admin.site.register(models.Course)
+class CourseAdmin(admin.ModelAdmin):
+    list_display = ('title', 'price', 'category')
+    
+class CoursesInline(admin.TabularInline):
+    model = Course
+    exclude = ['created_at']
+    extra = 0
+    
+class CategoryAdmin(admin.ModelAdmin):
+    list_display = ('title', 'created_at')
+    fieldsets = [
+        (None, {'fields': ['title']}),
+        ('Dates', {
+            'fields': ['created_at'],
+            'classes': ['collapse']
+        })
+    ]
+    inlines = [CoursesInline]
+
+admin.site.register(Course, CourseAdmin)
+admin.site.register(Category, CategoryAdmin)
